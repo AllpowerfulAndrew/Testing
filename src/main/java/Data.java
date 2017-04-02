@@ -1,12 +1,11 @@
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Formatter;
 import java.util.Properties;
 
 /**
  * Class Data.
- * Create
+ * Create XML file with request dates.
  */
 public class Data {
     private Properties properties;
@@ -20,15 +19,12 @@ public class Data {
     }
 
     private void write() {
-
         try {
             properties = new Properties();
             properties.load(new FileInputStream("src/main/resources/testing.properties"));
             request = new Request(properties.getProperty("expected.info"));
 
             formatter = new Formatter("src/main/resources/" + file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

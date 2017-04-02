@@ -8,20 +8,25 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
+/**
+ * Class XMLParser.
+ * Create ArrayList with parsed request dates.
+ */
 public class XMLParser {
     private String file;
-    private ArrayList<Currency> currencies = new ArrayList<>();
-    private Currency valute;
-
+    private Map currencies = new TreeMap<Integer, Currency>();
 
     public XMLParser(String file) {
         this.file = file;
     }
 
-    public ArrayList<Currency> parse() {
+    public Map parse() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        new Data("data.xml");
+
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse("src/main/resources/" + file);
@@ -47,8 +52,6 @@ public class XMLParser {
                 NodeList valList = val.getChildNodes();
 
                 addToList(id, valList);
-
-
             }
         }
     }
@@ -83,8 +86,8 @@ public class XMLParser {
                         value = Double.parseDouble(element.getTextContent());
                 }
             }
-
-            currencies.add(new Currency(Integer.parseInt(id), numCode, charCode, nominal, name, value));
         }
+
+        currencies.put(name, new Currency(name, numCode, charCode, nominal, value));
     }
 }

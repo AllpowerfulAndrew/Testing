@@ -1,22 +1,16 @@
 public class Currency {
-    private final int id;
     private final int numCode;
     private final String charCode;
     private final int nominal;
     private final String name;
     private final double value;
 
-    public Currency(int id, int numCode, String charCode, int nominal, String name, double value) {
-        this.id = id;
+    public Currency(String name, int numCode, String charCode, int nominal, double value) {
+        this.name = name;
         this.numCode = numCode;
         this.charCode = charCode;
         this.nominal = nominal;
-        this.name = name;
         this.value = value;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public int getNumCode() {
@@ -37,5 +31,10 @@ public class Currency {
 
     public double getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return getNominal() + " " + getNumCode() + " " + getValue() + " " + getCharCode() + " " + getName();
     }
 }

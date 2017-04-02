@@ -44,13 +44,7 @@ public class Testing {
     }
 
     @Test
-    public void parse() {
-        new Data("data.xml");
-    }
-
-    @Test
     public void out() {
-//        System.out.println(new XMLParser("data.xml").parse());
         new Excel().create();
     }
 }
