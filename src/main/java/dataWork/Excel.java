@@ -1,3 +1,6 @@
+package dataWork;
+
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -5,26 +8,43 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Class Excel.
+ * Class data.Excel.
  * Create XLS file with currencies.
  */
 public class Excel {
+    private static final Logger LOG = Logger.getLogger(Excel.class);
     private Map currencies;
 
-    public void create() {
+    public List getCurrencies() {
+        List<Currency> currencies = new ArrayList<>();
+
+        create();
+
+        this.currencies.forEach((key, obj) -> {
+            Currency currency = (Currency) obj;
+            currencies.add(new Currency((String) key, currency.getNumCode(), currency.getCharCode(), currency.getNominal(), currency.getValue()));
+        });
+
+        return currencies;
+    }
+
+    private void create() {
+        LOG.info("Create TreeMap with currencies");
         currencies = new XMLParser("data.xml").parse();
 
         Workbook wbook = new HSSFWorkbook();
         Sheet sheet = wbook.createSheet("Curs");
         Row[] row = new Row[currencies.size()];
-
-        for (int i = 0; i < currencies.size(); i++) {
-            row[i] = sheet.createRow(i);
-        }
         final int[] i = {0, 0, 0, 0, 0};
+
+        for (int j = 0; j < currencies.size(); j++) {
+            row[j] = sheet.createRow(j);
+        }
 
         currencies.forEach((key, obj) -> {
             row[(i[0]++)].createCell(0).setCellValue((String) key);
@@ -40,11 +60,12 @@ public class Excel {
 
     private void write(Workbook wbook) {
         try {
+            LOG.info("Write dates to XLS file");
             FileOutputStream fos = new FileOutputStream("src/main/resources/Currencies.xls");
             wbook.write(fos);
             fos.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Writing error!", e);
         }
     }
 }

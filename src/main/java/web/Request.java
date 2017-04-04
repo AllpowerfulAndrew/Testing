@@ -1,3 +1,5 @@
+package web;
+
 import org.apache.commons.lang3.text.StrBuilder;
 
 import java.io.BufferedReader;

@@ -3,13 +3,16 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import testing.WebBrowser;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import static org.testng.Assert.assertEquals;
+
 public class Testing {
-    private BrowserInfo info;
+    private WebBrowser info;
 
     @BeforeClass
     public void setProperties() {
@@ -27,24 +30,22 @@ public class Testing {
 
     @Test
     public void checkIeInfo() {
-        info = new BrowserInfo(new InternetExplorerDriver());
-        info.check();
+        info = new WebBrowser(new InternetExplorerDriver());
+        info.openPage();
+        assertEquals(true, info.checkData());
     }
 
     @Test
     public void checkChromeInfo() {
-        info = new BrowserInfo(new ChromeDriver());
-        info.check();
+        info = new WebBrowser(new ChromeDriver());
+        info.openPage();
+        assertEquals(true, info.checkData());
     }
 
     @Test
     public void checkFirefoxInfo() {
-        info = new BrowserInfo(new FirefoxDriver());
-        info.check();
-    }
-
-    @Test
-    public void out() {
-        new Excel().create();
+        info = new WebBrowser(new FirefoxDriver());
+        info.openPage();
+        assertEquals(true, info.checkData());
     }
 }

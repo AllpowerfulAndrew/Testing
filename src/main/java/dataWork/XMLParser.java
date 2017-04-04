@@ -1,3 +1,6 @@
+package dataWork;
+
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -12,10 +15,12 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Class XMLParser.
- * Create ArrayList with parsed request dates.
+ * Class data.XMLParser.
+ * Create TreeMap with parsed request dates.
  */
-public class XMLParser {
+public class XMLParser{
+    public static final Logger LOG = Logger.getLogger(XMLParser.class);
+
     private String file;
     private Map currencies = new TreeMap<Integer, Currency>();
 
@@ -24,10 +29,12 @@ public class XMLParser {
     }
 
     public Map parse() {
+        LOG.info("Start parsing");
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        new Data("data.xml");
+        new Data().getXMLData();
 
         try {
+            LOG.info("Create document for parsing");
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse("src/main/resources/" + file);
             NodeList currencyList = doc.getElementsByTagName("Valute");
@@ -35,13 +42,15 @@ public class XMLParser {
             iterateVal(currencyList);
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
+            LOG.error("Error with parsing", e);
         }
 
         return currencies;
     }
 
     private void iterateVal(NodeList currencyList) {
+        LOG.info("Write request dates");
+
         for (int i = 0; i < currencyList.getLength(); i++) {
             Node currency = currencyList.item(i);
 

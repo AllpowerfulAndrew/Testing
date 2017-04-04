@@ -1,3 +1,5 @@
+package dataWork;
+
 public class Currency {
     private final int numCode;
     private final String charCode;
