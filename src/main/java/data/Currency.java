@@ -1,4 +1,4 @@
-package dataWork;
+package data;
 
 public class Currency {
     private final int numCode;

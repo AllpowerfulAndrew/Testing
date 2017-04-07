@@ -1,35 +1,51 @@
 package web;
 
 import org.apache.commons.lang3.text.StrBuilder;
+import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Properties;
 
 public class Request {
-    private String url;
+    public static final Logger LOG = Logger.getLogger(Request.class);
+    private Properties properties;
 
-    public Request(final String url) {
-        this.url = url;
-    }
-
-    public Object getExpectedInfo() {
+    public String getExpectedInfo() {
+        LOG.info("Create request");
         HttpURLConnection connection = null;
-        StrBuilder info = new StrBuilder();
+        StrBuilder strBuilder = new StrBuilder();
+        LOG.info("Get request properties");
+        properties = new Properties();
 
         try {
-            connection = (HttpURLConnection) new URL(url).openConnection();
+            properties.load(new FileInputStream("src/test/resources/testing.properties"));
+        } catch (IOException e) {
+            LOG.error("Trouble with file: ", e);
+        }
+
+        return connectionResult(connection, strBuilder);
+    }
+
+    private String connectionResult(HttpURLConnection connection, StrBuilder strBuilder) {
+        String info = null;
+
+        try {
+            connection = (HttpURLConnection) new URL(properties.getProperty("expected.info")).openConnection();
 
             connection.setRequestMethod("GET");
             connection.setUseCaches(false);
 
             connection.connect();
 
-            return readInfo(connection, info);
+            LOG.info("Get expected content as XML file");
+            info = readInfo(connection, strBuilder).toString();
         } catch (Throwable e) {
-            e.printStackTrace();
+            LOG.info("Connection error: ", e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -51,7 +67,7 @@ public class Request {
 
             return info;
         } else {
-            System.out.println("Fail " + connection.getResponseCode() + ", " + connection.getResponseMessage());
+            LOG.info("Fail " + connection.getResponseCode() + ", " + connection.getResponseMessage());
         }
 
         return info;

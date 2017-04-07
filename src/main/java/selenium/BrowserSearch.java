@@ -1,7 +1,7 @@
-package testing;
+package selenium;
 
-import dataWork.Currency;
-import dataWork.Excel;
+import data.Currency;
+import io.appium.java_client.android.AndroidDriver;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -11,17 +11,21 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WebBrowser {
-    public static final Logger LOG = Logger.getLogger(WebBrowser.class);
+public class BrowserSearch {
+    public static final Logger LOG = Logger.getLogger(BrowserSearch.class);
     private WebDriver browser;
     List<Currency> currencies = new ArrayList<>();
 
-    public WebBrowser(final WebDriver browser) {
+    public BrowserSearch(final WebDriver browser) {
         this.browser = browser;
     }
 
     public void openPage() {
-        browser.manage().window().maximize();
+        LOG.info("Opening browser");
+
+        if (!(browser instanceof AndroidDriver))
+            browser.manage().window().maximize();
+
         browser.get("http://bnm.md/ro/content/ratele-de-schimb");
 
         ((JavascriptExecutor)browser).executeScript("scroll(0,400)");
@@ -31,16 +35,16 @@ public class WebBrowser {
         browser.findElement(By.cssSelector(".ui-datepicker-month")).findElement(By.cssSelector("option[value='2']")).click();
         browser.findElement(By.linkText("31")).click();
 
+        LOG.info("Getting actual content");
         getData();
 
+        LOG.info("Closing browser");
         browser.quit();
     }
 
     private void getData() {
         try {
-            LOG.info("Waiting...");
             Thread.sleep(5000);
-            LOG.info("Continue");
         } catch (InterruptedException e) {
             LOG.error("Thread error: ", e);
         }
@@ -95,8 +99,8 @@ public class WebBrowser {
         }
     }
 
-    public boolean checkData() {
-        ArrayList<Currency> expected = (ArrayList<Currency>) new Excel().getCurrencies();
+    public boolean checkData(ArrayList<Currency> expected) {
+        LOG.info("Start checking actual content with expected content");
 
         for (int i = 0; i < expected.size(); i++) {
             if (!expected.get(i).getName().equals(currencies.get(i).getName())) return false;
@@ -106,6 +110,8 @@ public class WebBrowser {
             if (!(expected.get(i).getValue() == currencies.get(i).getValue())) return false;
         }
 
+        LOG.info("Complete checking actual content with expected content");
+        LOG.info("Return test results");
         return true;
     }
 }

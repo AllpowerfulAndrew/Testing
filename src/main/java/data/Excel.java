@@ -1,4 +1,4 @@
-package dataWork;
+package data;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -8,8 +8,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,23 +18,11 @@ public class Excel {
     private static final Logger LOG = Logger.getLogger(Excel.class);
     private Map currencies;
 
-    public List getCurrencies() {
-        List<Currency> currencies = new ArrayList<>();
-
-        create();
-
-        this.currencies.forEach((key, obj) -> {
-            Currency currency = (Currency) obj;
-            currencies.add(new Currency((String) key, currency.getNumCode(), currency.getCharCode(), currency.getNominal(), currency.getValue()));
-        });
-
-        return currencies;
+    public Excel(Map currencies) {
+        this.currencies = currencies;
     }
 
     private void create() {
-        LOG.info("Create TreeMap with currencies");
-        currencies = new XMLParser("data.xml").parse();
-
         Workbook wbook = new HSSFWorkbook();
         Sheet sheet = wbook.createSheet("Curs");
         Row[] row = new Row[currencies.size()];
@@ -61,7 +47,7 @@ public class Excel {
     private void write(Workbook wbook) {
         try {
             LOG.info("Write dates to XLS file");
-            FileOutputStream fos = new FileOutputStream("src/main/resources/Currencies.xls");
+            FileOutputStream fos = new FileOutputStream("src/main/resources/currencies.xls");
             wbook.write(fos);
             fos.close();
         } catch (IOException e) {
