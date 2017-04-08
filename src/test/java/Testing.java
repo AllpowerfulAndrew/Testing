@@ -4,12 +4,14 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import selenium.BrowserSearch;
 
@@ -26,8 +28,6 @@ public class Testing {
     private BrowserSearch info;
     private DesiredCapabilities cap;
     private ArrayList<Currency> expected;
-
-
 
     // TODO Don't forget to set your personal full path to driver and
     private String chromeDriverPath;
@@ -66,32 +66,27 @@ public class Testing {
         cap.setCapability(MobileCapabilityType.VERSION, "4.4.2");
     }
 
-    @Test
-    public void checkIeInfo() {
-        LOG.info("Start testing on IE");
-        info = new BrowserSearch(new InternetExplorerDriver());
+    @DataProvider
+    public Object[][] getWebDrivers() {
+        Object[][] drivers = {
+                {"Start testing on IE", new InternetExplorerDriver()},
+                {"Start testing on Chrome", new ChromeDriver()},
+                {"Start testing on Firefox", new FirefoxDriver()}
+        };
+
+        return drivers;
+    }
+
+    @Test(dataProvider = "getWebDrivers")
+    public void checkDesktopBrowser(String message, WebDriver driver) {
+        LOG.info(message);
+        info = new BrowserSearch(driver);
         info.openPage();
         assertEquals(true, info.checkData(expected));
     }
 
     @Test
-    public void checkChromeInfo() {
-        LOG.info("Start testing on Chrome");
-        info = new BrowserSearch(new ChromeDriver());
-        info.openPage();
-        assertEquals(true, info.checkData(expected));
-    }
-
-    @Test
-    public void checkFirefoxInfo() {
-        LOG.info("Start testing on Firefox");
-        info = new BrowserSearch(new FirefoxDriver());
-        info.openPage();
-        assertEquals(true, info.checkData(expected));
-    }
-
-    @Test
-    public void androidChromeInfo() {
+    public void checkAndroidBrowser() {
         cap.setCapability(MobileCapabilityType.BROWSER_NAME, BrowserType.CHROME);
         cap.setCapability("chromedriverExecutable", chromeDriverPath);
 
