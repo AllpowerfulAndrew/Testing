@@ -93,11 +93,4 @@ public class Testing {
         info = new ExchangeChecking(new AndroidDriver(url, cap));
         assertEquals(true, info.check(expected));
     }
-
-    @Test
-    public void check() {
-        WebDriver browser = new FirefoxDriver();
-        browser.get("http://vk.com");
-        browser.close();
-    }
 }
