@@ -13,7 +13,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import selenium.BrowserSearch;
+import selenium.ExchangeChecking;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import static org.testng.Assert.assertEquals;
 
 public class Testing {
     public static final Logger LOG = Logger.getLogger(Testing.class);
-    private BrowserSearch info;
+    private ExchangeChecking info;
     private DesiredCapabilities cap;
     private ArrayList<Currency> expected;
 
@@ -80,9 +80,8 @@ public class Testing {
     @Test(dataProvider = "getWebDrivers")
     public void checkDesktopBrowser(String message, WebDriver driver) {
         LOG.info(message);
-        info = new BrowserSearch(driver);
-        info.openPage();
-        assertEquals(true, info.checkData(expected));
+        info = new ExchangeChecking(driver);
+        assertEquals(true, info.check(expected));
     }
 
     @Test
@@ -91,9 +90,14 @@ public class Testing {
         cap.setCapability("chromedriverExecutable", chromeDriverPath);
 
         LOG.info("Start testing on Android - Chrome");
-        info = new BrowserSearch(new AndroidDriver(url, cap));
-        info.openPage();
+        info = new ExchangeChecking(new AndroidDriver(url, cap));
+        assertEquals(true, info.check(expected));
+    }
 
-        assertEquals(true, info.checkData(expected));
+    @Test
+    public void check() {
+        WebDriver browser = new FirefoxDriver();
+        browser.get("http://vk.com");
+        browser.close();
     }
 }
